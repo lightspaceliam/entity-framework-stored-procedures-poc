@@ -41,6 +41,7 @@ git clone https://github.com/lightspaceliam/entity-framework-stored-procedures-p
 
 Run the application from Visual Studio 2019^, VS Code or even CMD.
 Using CMD:
+
 1. With CMD, navigate to: ```cd {your-directory}/entity-framework-stored-procedures-poc/Api```
 2. Run command: ```dotnet run```
 3. Swagger will load ing the browser at this address: https://localhost:5001/swagger/index.html
@@ -48,17 +49,17 @@ Using CMD:
 ## API Endpoints
 
 | Operation | Method | Endpoint |
-| --- | --- | --- | 
+| --- | --- | --- |
 | **C**reate | POST | /api/people/new
-| **R**ead | GET | /api/people
-| **U**pdate | PUT | /api​/people​/{id}​/update
-| **D**elete | DELETE | /api/people/{id}/delete
+| **R**ead | GET | /api/people & /api/people/{id:int}
+| **U**pdate | PUT | /api​/people​/{id:int}​/update
+| **D**elete | DELETE | /api/people/{id:int}/delete
 
 ## Solution Architecture
 
 This .NET Core solution contains the following:
 
-```
+```diagram
 +-- Ef.StoredProcedures
 |   +-- Entities
 |       +-- DbContexts
