@@ -4,7 +4,7 @@ The purpose of this POC is to demonstrate the basics of using stored procedures 
 
 Whilst this pattern expands the opportunities for a staggered approach to migrating to a more contemporary data access pattern with Microsoft SQL, my main concerns include:
 
-1. Unit Testing the data access layer 
+1. Unit Testing the data access layer
 2. Promotes a disconnect from C# to database which facilitates increase work load to make updates to data access layer & database
 3. Data loading - navigational properties, EntityFrameworkCore provides this with minimal configuration
 
@@ -15,28 +15,33 @@ Whilst this pattern expands the opportunities for a staggered approach to migrat
 - [Azure Data Studio](https://docs.microsoft.com/en-us/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15) or [SQL Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15)
 - [Visual Studio or VS Code with appropriate extensions: (SQL Server (mssql))](https://visualstudio.microsoft.com/downloads/)
 - Install cli tools, run command from CMD/command prompt:
-```
+
+```cli
 dotnet tool install --global dotnet-ef
 ```
+
+- The current solution is configured to create a local Microsoft SQL database on application start up. It requires access to server: localhost & TCP/IP must be enabled. Feel free to modify connection strings to match your local environment, found here:
+    - Api\appsettings.Developement.json
+    - Entities\DbContexts\EfStoredProcedureDbContextFactory.cs
 
 ## Installation
 
 1. Clone the repository:
-```
-git clone https://github.com/lightspaceliam/entity-framework-stored-procedures-poc
-.git
 
+```git
+git clone https://github.com/lightspaceliam/entity-framework-stored-procedures-poc.git
 ```
+
 2. With CMD, navigate to: cd {your-directory}/entity-framework-stored-procedures-poc/Entities
-3. run dotnet cli command:
-```
-dotnet ef database update
-```
+3. The Api project now supports auto database migrations. Please review database connections found in:
+    - Api\appsettings.Developement.json
+    - Entities\DbContexts\EfStoredProcedureDbContextFactory.cs
 
 ## Run the Application
+
 Run the application from Visual Studio 2019^, VS Code or even CMD.
 Using CMD:
-1. With CMD, navigate to: cd {your-directory}/entity-framework-stored-procedures-poc/Api
+1. With CMD, navigate to: ```cd {your-directory}/entity-framework-stored-procedures-poc/Api```
 2. Run command: ```dotnet run```
 3. Swagger will load ing the browser at this address: https://localhost:5001/swagger/index.html
 
@@ -46,12 +51,13 @@ Using CMD:
 | --- | --- | --- | 
 | **C**reate | POST | /api/people/new
 | **R**ead | GET | /api/people
-| **C**reate | PUT | /api​/people​/{id}​/update
-| **C**reate | DELETE | /api/people/{id}/delete
+| **U**pdate | PUT | /api​/people​/{id}​/update
+| **D**elete | DELETE | /api/people/{id}/delete
 
 ## Solution Architecture
 
 This .NET Core solution contains the following:
+
 ```
 +-- Ef.StoredProcedures
 |   +-- Entities
@@ -75,6 +81,7 @@ This .NET Core solution contains the following:
 |       +-- Controllers
 |           +-- PersonController.cs CRUD endpoints
 ```
+
 Whilst I have included a unit testing project with boiler plate in memory database configuration and a single concrete unit test, it appears Microsoft Entity Framework InMemoryDatabase does not support Stored Procedures, well I couldn’t find a simple work around. And that’s an important point! I love the rich toolset .NET Core provides because I can do more with less. I don’t want to or don’t have time to write excessive, overcomplicated code to unit test.
 
 ## Pros & Cons
@@ -86,17 +93,10 @@ Whilst I have included a unit testing project with boiler plate in memory databa
 | Migration tasks can be broken down into smaller tasks or units of work | Implementing stored procedures facilitates a detachment from C# entity code and the database
 || If a database table is updated, the developer has to make changes in multiple places
 || More complexity involved to handle concurrency
-|| Added complexity to facilitate Eager, Explicit & Lazy loading related data
+|| Added complexity to facilitate Eager, Explicit & Lazy loading of related data
 || Added complexity to loading related data. How to handle related entities / navigational properties
 
 ## Refereces
 
 - [Raw SQL Queries - Passing parameters](https://docs.microsoft.com/en-us/ef/core/querying/raw-sql#passing-parameters)
 - [Entity Framework Core tools reference - .NET Core CLI](https://docs.microsoft.com/en-us/ef/core/cli/dotnet)
-### Unit Testing EF that implement Stored Procedures (In Memory Database NOT SUPPORTED)...
-2016-11-27
-https://www.davepaquette.com/archive/2016/11/27/integration-testing-with-entity-framework-core-and-sql-server.aspx
-2017-11-21
-https://nodogmablog.bryanhogan.net/2017/11/unit-testing-entity-framework-core-stored-procedures/
-2018-12-28
-https://github.com/efarr/mock-ef-core-fromsql
