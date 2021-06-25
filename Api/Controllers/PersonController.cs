@@ -37,6 +37,11 @@ namespace Api.Controllers
         {
             var person = await _entityService.FindByIdAsync(id);
 
+            if(person == null)
+            {
+                _logger.LogWarning($"{typeof(Person).Name}: {id} not found.");
+                return NotFound();
+            }
             return Ok(person);
         }
 
@@ -49,9 +54,10 @@ namespace Api.Controllers
 
                 return CreatedAtAction(nameof(FindById), new { id = response.Id }, response);
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
                 // TODO: not for production. Requires more granular strategy. Also, MVP stored procedure, not appropriately written. Out of scope.
+                _logger.LogCritical(ex, $"{typeof(DbUpdateException).Name} raised whist attempting to create {typeof(Person).Name}.");
                 return BadRequest();
             }
             
@@ -78,9 +84,10 @@ namespace Api.Controllers
                  */
                 //return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 // TODO: not for production. Requires more granular strategy. Also, MVP stored procedure, masks concurrency. Out of scope.
+                _logger.LogCritical(ex, $"{typeof(DbUpdateConcurrencyException).Name} raised whist attempting to update {typeof(Person).Name}.");
                 return BadRequest();
             }
         }
@@ -99,9 +106,10 @@ namespace Api.Controllers
                 await _entityService.DeleteAsync(id);
                 return NoContent();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // TODO: not for production. Requires more granular strategy. Also, MVP stored procedure. Out of scope.
+                _logger.LogCritical(ex, $"{typeof(DbUpdateException).Name} raised whist attempting to delete {typeof(Person).Name}.");
                 return BadRequest();
             }
         }

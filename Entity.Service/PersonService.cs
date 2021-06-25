@@ -41,7 +41,7 @@ namespace Entity.Service
             var id = new SqlParameter("id", DBNull.Value);
 
             var people = await _context.People
-                //.FromSqlRaw("EXECUTE dbo.FindPeople @id", id)
+                .FromSqlRaw("EXECUTE dbo.FindPeople @id", id)
                 .ToListAsync();
 
             return people;
